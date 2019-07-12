@@ -10,7 +10,7 @@ import { yPointChanged } from '../actions'
 
 const HEADER_MIN_HEIGHT = 100;
 const HEADER_MAX_HEIGHT = 350;
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 
 class Chart extends Component {
@@ -100,6 +100,26 @@ class Chart extends Component {
             outputRange: [16, 0],
             extrapolate: Animated.Extrapolate.CLAMP
         });
+        const fastPaymentButtonTop = this.scrollYAnimatedValue.interpolate({
+            inputRange: [0, (HEADER_MAX_HEIGHT - HEADER_MAX_HEIGHT * 0.95)],
+            outputRange: [height * 0.65, height * 0.85],
+            extrapolate: Animated.Extrapolate.CLAMP
+        });
+        const fastPaymentButtonLeft = this.scrollYAnimatedValue.interpolate({
+            inputRange: [0, (HEADER_MAX_HEIGHT - HEADER_MAX_HEIGHT * 0.90)],
+            outputRange: [width * 0.25, width * 0.8],
+            extrapolate: Animated.Extrapolate.CLAMP
+        });
+        const fastPaymentButtonWidth = this.scrollYAnimatedValue.interpolate({
+            inputRange: [0, (HEADER_MAX_HEIGHT - HEADER_MAX_HEIGHT * 0.90)],
+            outputRange: [220, 40],
+            extrapolate: Animated.Extrapolate.CLAMP
+        });
+        const fastPaymentButtonFontSize = this.scrollYAnimatedValue.interpolate({
+            inputRange: [0, (HEADER_MAX_HEIGHT - HEADER_MAX_HEIGHT * 0.90)],
+            outputRange: [22, 0],
+            extrapolate: Animated.Extrapolate.CLAMP
+        });
         return (
             <View style={styles.container}>
                 <Animated.ScrollView
@@ -120,6 +140,12 @@ class Chart extends Component {
                             { title: 'Title3', data: ['item5', 'item6'] },
                             { title: 'Title4', data: ['item5', 'item6'] },
                             { title: 'Title5', data: ['item5', 'item6'] },
+                            { title: 'Title6', data: ['item5', 'item6'] },
+                            { title: 'Title7', data: ['item5', 'item6'] },
+                            { title: 'Title8', data: ['item5', 'item6'] },
+                            { title: 'Title9', data: ['item5', 'item6'] },
+                            { title: 'Title10', data: ['item5', 'item6'] },
+                            { title: 'Title11', data: ['item5', 'item6'] },
                         ]}
                         keyExtractor={(item, index) => item + index}
                     />
@@ -201,6 +227,21 @@ class Chart extends Component {
                             <Text style={{ color: 'white' }}>Windows pay is here</Text>
                         </View>
                     </Carousel>
+                </Animated.View>
+
+                <Animated.View style={[styles.fastPaymentButtonArea, { top: fastPaymentButtonTop, left: fastPaymentButtonLeft }]}>
+                    <TouchableOpacity
+                        onPress={() => { console.log('fast payment'); }}
+                        style={styles.fastPaymentButton}>
+                        <Animated.View style={{ flexDirection: 'row', justifyContent: 'center', width: fastPaymentButtonWidth }}>
+                            <View style={{ alignItems: 'center', margin: 5, marginBottom: 0 }}>
+                                <Icon name={"bolt"} size={20} color="#fff" />
+                            </View>
+                            <View>
+                                <Animated.Text style={{ color: '#fff', fontSize: fastPaymentButtonFontSize }}>Fast Payments</Animated.Text>
+                            </View>
+                        </Animated.View>
+                    </TouchableOpacity>
                 </Animated.View>
 
             </View>
@@ -306,6 +347,20 @@ const styles = StyleSheet.create({
         marginRight: 16,
         marginTop: 24,
         opacity: 0.8,
+    },
+    fastPaymentButtonArea: {
+        position: 'absolute',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    fastPaymentButton: {
+        borderWidth: 1,
+        borderColor: 'rgba(0,0,0,0.2)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#0078ff',
+        borderRadius: 35,
+        height: 40
     },
 });
 
