@@ -1,17 +1,58 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Platform, ScrollView, TouchableOpacity, Dimensions, SectionList } from 'react-native';
+import { View, Text, StyleSheet, Platform, ActivityIndicator, TouchableOpacity, Dimensions, SectionList } from 'react-native';
 import Animated from "react-native-reanimated";
 import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Carousel from 'react-native-carousel-view';
-//import ScrollingButtonMenu from 'react-native-scrolling-button-menu';
 import Graph from "./Graph";
-import { yPointChanged } from '../actions'
+import { yPointChanged, convertRates, balanceChanged } from '../actions';
 
 const HEADER_MIN_HEIGHT = 100;
 const HEADER_MAX_HEIGHT = 350;
 const { width, height } = Dimensions.get('window');
-
+const euroData = [
+    { date: new Date(2018, 9, 1).getTime(), value: 0 },
+    { date: new Date(2018, 9, 16).getTime(), value: 0 },
+    { date: new Date(2018, 9, 17).getTime(), value: 300 },
+    { date: new Date(2018, 10, 1).getTime(), value: 200 },
+    { date: new Date(2018, 10, 2).getTime(), value: 300 },
+    { date: new Date(2018, 10, 5).getTime(), value: 100 },
+    { date: new Date(2018, 11, 1).getTime(), value: 0 },
+    { date: new Date(2018, 11, 16).getTime(), value: 50 },
+    { date: new Date(2018, 11, 17).getTime(), value: 500 },
+    { date: new Date(2018, 12, 1).getTime(), value: 200 },
+    { date: new Date(2018, 12, 2).getTime(), value: 300 },
+    { date: new Date(2018, 12, 5).getTime(), value: 100 }
+];
+const dolarData = [
+    { date: new Date(2018, 9, 1).getTime(), value: 500 },
+    { date: new Date(2018, 9, 16).getTime(), value: 150 },
+    { date: new Date(2018, 9, 17).getTime(), value: 350 },
+    { date: new Date(2018, 10, 1).getTime(), value: 280 },
+    { date: new Date(2018, 10, 2).getTime(), value: 100 },
+    { date: new Date(2018, 10, 5).getTime(), value: 10 },
+    { date: new Date(2018, 11, 1).getTime(), value: 80 },
+    { date: new Date(2018, 11, 16).getTime(), value: 50 },
+    { date: new Date(2018, 11, 17).getTime(), value: 500 },
+    { date: new Date(2018, 12, 1).getTime(), value: 800 },
+    { date: new Date(2018, 12, 2).getTime(), value: 30 },
+    { date: new Date(2018, 12, 5).getTime(), value: 100 }
+];
+const tlData = [
+    { date: new Date(2018, 9, 1).getTime(), value: 10 },
+    { date: new Date(2018, 9, 16).getTime(), value: 1000 },
+    { date: new Date(2018, 9, 17).getTime(), value: 300 },
+    { date: new Date(2018, 10, 1).getTime(), value: 280 },
+    { date: new Date(2018, 10, 2).getTime(), value: 3000 },
+    { date: new Date(2018, 10, 5).getTime(), value: 280 },
+    { date: new Date(2018, 11, 1).getTime(), value: 0 },
+    { date: new Date(2018, 11, 16).getTime(), value: 50 },
+    { date: new Date(2018, 11, 17).getTime(), value: 500 },
+    { date: new Date(2018, 12, 1).getTime(), value: 2200 },
+    { date: new Date(2018, 12, 2).getTime(), value: 300 },
+    { date: new Date(2018, 12, 5).getTime(), value: 1000 }
+];
+let totalBalances = [];
 
 class Chart extends Component {
     constructor() {
@@ -23,27 +64,18 @@ class Chart extends Component {
     }
 
     componentWillMount() {
-        for (var i = 1; i <= 50; i++) {
-            this.array.push(i);
-        }
+        totalBalances.push(euroData)
+        totalBalances.push(dolarData)
+        totalBalances.push(tlData)
+        this.props.convertRates(totalBalances);
+        this.onBalanceChange(0);
+    }
+
+    onBalanceChange(page) {
+        this.props.balanceChanged(totalBalances[page])
     }
 
     render() {
-
-        const data = [
-            { date: new Date(2018, 9, 1).getTime(), value: 0 },
-            { date: new Date(2018, 9, 16).getTime(), value: 0 },
-            { date: new Date(2018, 9, 17).getTime(), value: 300 },
-            { date: new Date(2018, 10, 1).getTime(), value: 200 },
-            { date: new Date(2018, 10, 2).getTime(), value: 300 },
-            { date: new Date(2018, 10, 5).getTime(), value: 100 },
-            { date: new Date(2018, 11, 1).getTime(), value: 0 },
-            { date: new Date(2018, 11, 16).getTime(), value: 50 },
-            { date: new Date(2018, 11, 17).getTime(), value: 500 },
-            { date: new Date(2018, 12, 1).getTime(), value: 200 },
-            { date: new Date(2018, 12, 2).getTime(), value: 300 },
-            { date: new Date(2018, 12, 5).getTime(), value: 100 }
-        ];
 
         const headerHeight = this.scrollYAnimatedValue.interpolate({
             inputRange: [0, (HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT)],
@@ -52,7 +84,7 @@ class Chart extends Component {
         });
         const textSize = this.scrollYAnimatedValue.interpolate({
             inputRange: [0, (HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT)],
-            outputRange: [35, 18],
+            outputRange: [30, 18],
             extrapolate: Animated.Extrapolate.CLAMP
         });
         const subTextSize = this.scrollYAnimatedValue.interpolate({
@@ -120,6 +152,28 @@ class Chart extends Component {
             outputRange: [22, 0],
             extrapolate: Animated.Extrapolate.CLAMP
         });
+
+        const balanceCarousel = this.props.balances == null ? <ActivityIndicator /> :
+            (<Carousel
+                width={width * 0.4}
+                height={100}
+                hideIndicators={true}
+                animate={false}
+                onPageChange={this.onBalanceChange.bind(this)}
+            >
+                <View>
+                    <Animated.Text style={{ fontSize: subTextSize, color: '#aaa' }}>Total balance</Animated.Text>
+                    <Animated.Text style={[styles.headerText, { fontSize: textSize }]}>{this.props.balances[0]}</Animated.Text>
+                </View>
+                <View>
+                    <Animated.Text style={{ fontSize: subTextSize, color: '#aaa' }}>Total balance</Animated.Text>
+                    <Animated.Text style={[styles.headerText, { fontSize: textSize }]}>{this.props.balances[1]}</Animated.Text>
+                </View>
+                <View>
+                    <Animated.Text style={{ fontSize: subTextSize, color: '#aaa' }}>Total balance</Animated.Text>
+                    <Animated.Text style={[styles.headerText, { fontSize: textSize }]}>{this.props.balances[2]}</Animated.Text>
+                </View>
+            </Carousel>);
         return (
             <View style={styles.container}>
                 <Animated.ScrollView
@@ -153,25 +207,7 @@ class Chart extends Component {
 
                 <Animated.View style={[styles.animatedHeader, { height: headerHeight }]}>
                     <View>
-                        <Carousel
-                            width={width * 0.4}
-                            height={100}
-                            hideIndicators={true}
-                            animate={false}
-                        >
-                            <View>
-                                <Animated.Text style={{ fontSize: subTextSize, color: '#aaa' }}>Total balance</Animated.Text>
-                                <Animated.Text style={[styles.headerText, { fontSize: textSize }]}>€180.37</Animated.Text>
-                            </View>
-                            <View>
-                                <Animated.Text style={{ fontSize: subTextSize, color: '#aaa' }}>Total balance</Animated.Text>
-                                <Animated.Text style={[styles.headerText, { fontSize: textSize }]}>₺550.37</Animated.Text>
-                            </View>
-                            <View>
-                                <Animated.Text style={{ fontSize: subTextSize, color: '#aaa' }}>Total balance</Animated.Text>
-                                <Animated.Text style={[styles.headerText, { fontSize: textSize }]}>$220.37</Animated.Text>
-                            </View>
-                        </Carousel>
+                        {balanceCarousel}
                     </View>
                     <Animated.View style={{ marginTop: addFundsButtonMarginTop }}>
                         <TouchableOpacity
@@ -204,7 +240,7 @@ class Chart extends Component {
                 </Animated.View>
 
                 <Animated.View style={[styles.graph, { top: chartTop }]}>
-                    <Graph {...{ data }} />
+                    <Graph />
                 </Animated.View>
 
                 <Animated.View style={[styles.scrollingMenuStyle, { top: scrollingMenuTop, opacity: scrollingMenuOpacity }]}>
@@ -214,8 +250,6 @@ class Chart extends Component {
                         delay={5000}
                         indicatorAtBottom={true}
                         indicatorSize={20}
-                        indicatorText="✽"
-                        indicatorColor="white"
                     >
                         <View style={styles.contentContainer}>
                             <Text style={{ color: 'white' }}>Apple pay is here</Text>
@@ -365,14 +399,17 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-    const { yPoint } = state.graph;
+    const { yPoint, balances } = state.graph;
     return {
-        yPoint
+        yPoint,
+        balances
     };
 };
 
 
 export default connect(mapStateToProps,
     {
-        yPointChanged
+        yPointChanged,
+        convertRates,
+        balanceChanged
     })(Chart);

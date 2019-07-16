@@ -5,7 +5,6 @@ import { createStore, applyMiddleware } from 'redux';
 import ReduxThunk from 'redux-thunk';
 import reducers from './reducers';
 
-import Graph from "./components/Graph";
 import Chart from './components/Chart'
 
 const { width } = Dimensions.get("window");
