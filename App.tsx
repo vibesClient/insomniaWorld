@@ -20,3 +20,9 @@ const styles = StyleSheet.create({
     flex: 1,
   }
 });
+
+/*Kağan Buzcu - Software Engineer
+Vibes Yazılım
+Cumhuriyet Teknokent / SİVAS
+kaganbuzcu@gmail.com
+info@vibestechs.com */

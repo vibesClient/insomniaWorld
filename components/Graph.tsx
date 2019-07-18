@@ -1,11 +1,10 @@
 import * as React from "react";
-import { View, Dimensions, StyleSheet, Text, ActivityIndicator, Easing, Animated } from "react-native";
+import { View, Dimensions, StyleSheet, Text, ActivityIndicator, Animated } from "react-native";
 import { connect } from 'react-redux';
 import Svg, { Path, Defs, LinearGradient, Stop } from "react-native-svg";
 import { scaleTime, scaleLinear } from "d3-scale";
 import * as shape from "d3-shape";
 import Dash from 'react-native-dash';
-//import Animated from "react-native-reanimated";
 import Cursor from "./Cursor";
 import { interpolatePath } from 'd3-interpolate-path'
 
@@ -32,25 +31,106 @@ class Graph extends React.Component {
   state = {
     animation: new Animated.Value(0)
   }
-  /*componentDidUpdate() {
-    
-    this.openAnimation();
-  }*/
 
   openAnimation = () => {
+    const bouncedDuration = 20;
     Animated.sequence([
-      Animated.timing(this.state.animation, {
-        toValue: 1,
-        duration: 200
-      }),
       Animated.timing(this.state.animation, {
         toValue: 0,
         duration: 200
       }),
       Animated.timing(this.state.animation, {
+        toValue: 1.3,
+        duration: 250
+      }),
+      Animated.timing(this.state.animation, {
+        toValue: 1.25,
+        duration: bouncedDuration
+      }),
+      Animated.timing(this.state.animation, {
+        toValue: 1.2,
+        duration: bouncedDuration
+      }),
+      Animated.timing(this.state.animation, {
+        toValue: 1.15,
+        duration: bouncedDuration
+      }),
+      Animated.timing(this.state.animation, {
+        toValue: 1.10,
+        duration: bouncedDuration
+      }),
+      Animated.timing(this.state.animation, {
+        toValue: 1.05,
+        duration: bouncedDuration
+      }),
+      Animated.timing(this.state.animation, {
         toValue: 1,
-        duration: 200
-      })
+        duration: bouncedDuration
+      }),
+      Animated.timing(this.state.animation, {
+        toValue: 0.95,
+        duration: bouncedDuration
+      }),
+      Animated.timing(this.state.animation, {
+        toValue: 0.90,
+        duration: bouncedDuration
+      }),
+      Animated.timing(this.state.animation, {
+        toValue: 0.85,
+        duration: bouncedDuration
+      }),
+      Animated.timing(this.state.animation, {
+        toValue: 0.90,
+        duration: bouncedDuration
+      }),
+      Animated.timing(this.state.animation, {
+        toValue: 0.95,
+        duration: bouncedDuration
+      }),
+      Animated.timing(this.state.animation, {
+        toValue: 1,
+        duration: bouncedDuration
+      }),
+      Animated.timing(this.state.animation, {
+        toValue: 1.05,
+        duration: bouncedDuration
+      }),
+      Animated.timing(this.state.animation, {
+        toValue: 1.1,
+        duration: bouncedDuration
+      }),
+      Animated.timing(this.state.animation, {
+        toValue: 1.15,
+        duration: bouncedDuration
+      }),
+      Animated.timing(this.state.animation, {
+        toValue: 1.1,
+        duration: bouncedDuration
+      }),
+      Animated.timing(this.state.animation, {
+        toValue: 1.05,
+        duration: bouncedDuration
+      }),
+      Animated.timing(this.state.animation, {
+        toValue: 1,
+        duration: bouncedDuration
+      }),
+      Animated.timing(this.state.animation, {
+        toValue: 0.95,
+        duration: bouncedDuration
+      }),
+      Animated.timing(this.state.animation, {
+        toValue: 0.90,
+        duration: bouncedDuration
+      }),
+      Animated.timing(this.state.animation, {
+        toValue: 0.95,
+        duration: bouncedDuration
+      }),
+      Animated.timing(this.state.animation, {
+        toValue: 1,
+        duration: bouncedDuration
+      }),
     ]).start();
   }
 
@@ -77,7 +157,7 @@ class Graph extends React.Component {
       const d2 = shape
         .line<DataPoint>()
         .x(p => scaleX(p.date))
-        .y(p => scaleY(p.value * 1.7))
+        .y(p => scaleY(0))
         .curve(shape.curveBasis)(graphData) as string;
 
       const pathInterpolate = interpolatePath(d2, d)
@@ -88,40 +168,28 @@ class Graph extends React.Component {
         })
       })
       this.openAnimation();
-      /*setTimeout(() => {
-        this.openAnimation();
-      }, 5000)*/
 
       return (
         <View style={styles.container}>
+          {/* ----grafiğin solunda max, min ve ortalama değeri gösteren çizgiler
+            isteğe göre eklemek için yorum satırlarını kaldırınız.----
+
           <View style={styles.domainWrapper}>
             <View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.graphDomains}> {max.toFixed(0)} </Text>
-              </View>
-              <View style={{ flex: 4 }}>
-                <Dash dashThickness={0.4} dashColor="#999" style={styles.graphDomainLine} />
-              </View>
+              <Dash dashThickness={0.4} dashColor="#999" style={styles.graphDomainLine} />
+              <Text style={styles.graphDomains}> {max.toFixed(0)} </Text>
             </View>
             <View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.graphDomains}> {avr.toFixed(0)} </Text>
-              </View>
-              <View style={{ flex: 4 }}>
-                <Dash dashThickness={0.4} dashColor="#999" style={styles.graphDomainLine} />
-              </View>
+              <Dash dashThickness={0.4} dashColor="#999" style={styles.graphDomainLine} />
+              <Text style={styles.graphDomains}> {avr.toFixed(0)} </Text>
             </View>
             <View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.graphDomains}> {min.toFixed(0)} </Text>
-              </View>
-              <View style={{ flex: 4 }}>
-                <Dash dashThickness={0.4} dashColor="#999" style={styles.graphDomainLine} />
-              </View>
+              <Text style={styles.graphDomains}> {min.toFixed(0)} </Text>
+              <Dash dashThickness={0.4} dashColor="#999" style={styles.graphDomainLine} />
             </View>
           </View>
-
-          <Svg style={[StyleSheet.absoluteFill, { zIndex: 1 }]}>
+        */}
+          < Svg style={[StyleSheet.absoluteFill, { zIndex: 1 }]} >
             <Defs>
               <LinearGradient id="gradient" x1="50%" y1="0%" x2="50%" y2="100%">
                 <Stop offset="0%" stopColor="#cee3f9" stopOpacity="0.6" />
@@ -135,11 +203,11 @@ class Graph extends React.Component {
               ref={path => this._path = path}
             />
             <Path d={d} ref={path => this._path = path} fill="transparent" stroke="#3977e3" {...{ strokeWidth }} />
-          </Svg>
+          </Svg >
           <Cursor
             {...{ d }}
           />
-        </View>
+        </View >
       );
     }
   }
@@ -148,8 +216,7 @@ class Graph extends React.Component {
 const styles = StyleSheet.create({
   container: {
     width,
-    height,
-    backgroundColor: '#fff'
+    height
   },
   domainWrapper: {
     marginTop: height * 0.2,
@@ -158,13 +225,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     position: 'absolute',
     width: width,
-    zIndex: 5
+    zIndex: 50
   },
   graphDomains: {
     color: '#999',
+    fontSize: 14
   },
   graphDomainLine: {
-    width: width,
+    width: width * 0.91,
+    alignSelf: "flex-end"
   }
 });
 

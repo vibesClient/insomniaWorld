@@ -21,6 +21,7 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz",
     "react-native-carousel-view": "^0.5.1",
     "react-native-dash": "0.0.9",
+    "react-native-elements": "^1.1.0",
     "react-native-redash": "5.0.0",
     "react-native-scrolling-menu": "^0.1.1",
     "react-native-svg-animations": "^0.1.7",
