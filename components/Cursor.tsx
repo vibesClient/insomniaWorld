@@ -8,23 +8,24 @@ import { changeDataArrayIndex } from '../actions';
 const { sub, interpolate } = Animated;
 const TOUCH_SIZE = 400;
 const white = "white";
-
+let scrollPoint = 0;
 class Cursor extends Component {
   render() {
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    
+
     let scrollItemsLength = 0;
     this.props.scrollData.forEach(sc => {
-        scrollItemsLength += sc.data.length;
+      scrollItemsLength += sc.data.length;
     });
     const scrollLength = (scrollItemsLength * 50) + (this.props.scrollData.length * 40) - 220;
     const section = scrollLength / this.props.scrollData.length
 
     const dene = (index) => {
-      for (let i = 0; i < this.props.cA.length; i++) {           
+      console.log(this.props.cA);
+
+      for (let i = 0; i < this.props.cA.length; i++) {
         if (index >= this.props.cA[i] && index <= (this.props.cA[i] + section) && i != this.props.i) {
-            this.props.changeDataArrayIndex(i);
-            break;
+          this.props.changeDataArrayIndex(i);
         }
       }
     }
@@ -61,7 +62,7 @@ class Cursor extends Component {
           {new Date(this.props.scrollData[this.props.i].title).getDate() + ' ' +
             months[new Date(this.props.scrollData[this.props.i].title).getMonth()]}
         </Text>)
-        : <ActivityIndicator/>;
+        : <ActivityIndicator />;
 
     const price =
       typeof this.props.scrollData[this.props.i] == "object"
@@ -69,7 +70,7 @@ class Cursor extends Component {
         (<Text>
           {this.props.scrollData[this.props.i].price}
         </Text>)
-        : <ActivityIndicator/>;
+        : <ActivityIndicator />;
 
     return (
       <View style={[StyleSheet.absoluteFill, { zIndex: 9999 }]}>
@@ -99,7 +100,7 @@ class Cursor extends Component {
           >
             <Animated.Code>
               {
-                () => Animated.call([this.props.yPoint], setTranslation)
+                () => Animated.call([this.props.yPoint], setTranslation)                
               }
             </Animated.Code>
             {dateTime}

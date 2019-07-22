@@ -53,11 +53,6 @@ export const convertRates = (totalBalance) => (dispatch) => {
 wallet içerisindeki tüm veriler data dizisine push edilir ve reducer'a gönderilir. 
 bu veri reducer'da state'e yazılır. */
 export const balanceChanged = (chartData, chartItemsData) => (dispatch) => {
-
-    dispatch({
-        type: "currency_changed",
-        payload: []
-    })
     let scrollItemsLength = 0;
     chartItemsData.forEach(sc => {
         scrollItemsLength += sc.data.length;
