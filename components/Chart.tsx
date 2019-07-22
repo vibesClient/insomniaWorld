@@ -64,20 +64,21 @@ const tlData = [
     { date: new Date(2018, 12, 2).getTime(), value: 300 },
     { date: new Date(2018, 12, 5).getTime(), value: 1000 }
 ];
-
+/*tüm animasyonları ve grafik üzerindeki cursor'un konumu
+         belirleyen scrollY animated value'su tanımlanıyor */
+let scrollYAnimatedValue = new Animated.Value(0);
 /*tüm walletların componentWillMount'da içine atılacağı dizi tanımlanıyor */
 let totalBalances = [];
 let scrollSectionsData = [];
 class Chart extends Component {
     constructor() {
         super();
-        /*tüm animasyonları ve grafik üzerindeki cursor'un konumu
-         belirleyen scrollY animated value'su tanımlanıyor */
-        this.scrollYAnimatedValue = new Animated.Value(0);
+        this.scrollView = null;
     }
 
     /*componentWillMount, componentler yüklenmeden önce bir kez çalışır*/
     componentWillMount() {
+        /*statik veri oluşturuluyor */
         scrollSectionsData = [];
         euroData.forEach(wdata => {
             scrollSectionsData.push(
@@ -133,97 +134,99 @@ class Chart extends Component {
 
         /*action'daki balanceChanged methodunu çağırır.
     methodun içeriği graphAction'da açıklanmıştır. */
-        this.props.balanceChanged(totalBalances[page])
+        this.props.balanceChanged(totalBalances[page], scrollSectionsData)
     }
-
+    refScrollView = (scrollView) => {
+        this.scrollView = scrollView;
+    }
     render() {
-
         /*tüm animasyonlar scroll'a bağlı olarak çalışır ve açıklamaları tek tek yapılmıştır. */
 
         /*dairesel butonların yukarı doğru kayarak kaybolması için gerekli olan animasyon */
-        const headerHeight = this.scrollYAnimatedValue.interpolate({
+        const headerHeight = this.props.yPoint.interpolate({
             inputRange: [0, (HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT)],
             outputRange: [HEADER_MAX_HEIGHT - 200, HEADER_MIN_HEIGHT],
             extrapolate: Animated.Extrapolate.CLAMP
         });
         /*dairesel butonların opacity'sini azaltarak sıfıra indiren animasyon */
-        const buttonOpacity = this.scrollYAnimatedValue.interpolate({
+        const buttonOpacity = this.props.yPoint.interpolate({
             inputRange: [0, (HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT)],
             outputRange: [1.0, 0],
             extrapolate: Animated.Extrapolate.CLAMP
         });
         /*wallet'ın yazıldığı collapsible'ın içerisindeki fontSize'ı küçütüp büyüten animasyon  */
-        const textSize = this.scrollYAnimatedValue.interpolate({
+        const textSize = this.props.yPoint.interpolate({
             inputRange: [0, (HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT)],
             outputRange: [30, 18],
             extrapolate: Animated.Extrapolate.CLAMP
         });
         /*wallet'ın üzerindeki total balance yazısının fontSize'ını küçütüp büyüten animasyon  */
-        const subTextSize = this.scrollYAnimatedValue.interpolate({
+        const subTextSize = this.props.yPoint.interpolate({
             inputRange: [0, (HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT)],
             outputRange: [18, 0],
             extrapolate: Animated.Extrapolate.CLAMP
         });
         /*grafiğin tavana olan marginini azaltıp yükselten animasyon */
-        const chartTop = this.scrollYAnimatedValue.interpolate({
+        const chartTop = this.props.yPoint.interpolate({
             inputRange: [0, (HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT)],
             outputRange: [height * 0.26, height * 0.1],
             extrapolate: Animated.Extrapolate.CLAMP
         });
         /* reklam banner'ının tavana olan marginini azaltıp yükselten animasyon */
-        const collapsibleMenuTop = this.scrollYAnimatedValue.interpolate({
+        const collapsibleMenuTop = this.props.yPoint.interpolate({
             inputRange: [0, (HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT)],
             outputRange: [height * 0.5, height * 0.3],
             extrapolate: Animated.Extrapolate.CLAMP
         });
         /*reklam banner'ının opacity'sini azaltarak kaybolmasını sağlayan animasyon */
-        const collapsibleMenuOpacity = this.scrollYAnimatedValue.interpolate({
+        const collapsibleMenuOpacity = this.props.yPoint.interpolate({
             inputRange: [0, 220],
             outputRange: [1, 0],
             extrapolate: Animated.Extrapolate.CLAMP
         });
         /* addFunds butonunun genişliğini azaltıp çoğaltan animasyon */
-        const addFundsButtonWidth = this.scrollYAnimatedValue.interpolate({
+        const addFundsButtonWidth = this.props.yPoint.interpolate({
             inputRange: [0, (HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT)],
             outputRange: [120, 30],
             extrapolate: Animated.Extrapolate.CLAMP
         });
         /* addFunds butonunun tavana olan marginini azaltıp yükselten animasyon */
-        const addFundsButtonMarginTop = this.scrollYAnimatedValue.interpolate({
+        const addFundsButtonMarginTop = this.props.yPoint.interpolate({
             inputRange: [0, (HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT)],
             outputRange: [height * 0.02, 0],
             extrapolate: Animated.Extrapolate.CLAMP
         });
         /* addFunds butonunun fontSize'ını küçütüp büyüten animasyon */
-        const addFundsButtonFontSize = this.scrollYAnimatedValue.interpolate({
+        const addFundsButtonFontSize = this.props.yPoint.interpolate({
             inputRange: [0, (HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT)],
             outputRange: [16, 0],
             extrapolate: Animated.Extrapolate.CLAMP
         });
         /* fastPayment butonunun tavana olan marginini azaltıp yükselten animasyon */
-        const fastPaymentButtonTop = this.scrollYAnimatedValue.interpolate({
+        const fastPaymentButtonTop = this.props.yPoint.interpolate({
             inputRange: [0, (HEADER_MAX_HEIGHT - HEADER_MAX_HEIGHT * 0.95)],
             outputRange: [height * 0.65, height * 0.93],
             extrapolate: Animated.Extrapolate.CLAMP
         });
         /* fastPayment butonunun sol tarafa olan marginini azaltıp çoğaltan animasyon */
-        const fastPaymentButtonLeft = this.scrollYAnimatedValue.interpolate({
+        const fastPaymentButtonLeft = this.props.yPoint.interpolate({
             inputRange: [0, (HEADER_MAX_HEIGHT - HEADER_MAX_HEIGHT * 0.90)],
             outputRange: [width * 0.2, width * 0.8],
             extrapolate: Animated.Extrapolate.CLAMP
         });
         /* fastPayment butonunun genişliğini azaltıp çoğaltan animasyon */
-        const fastPaymentButtonWidth = this.scrollYAnimatedValue.interpolate({
+        const fastPaymentButtonWidth = this.props.yPoint.interpolate({
             inputRange: [0, (HEADER_MAX_HEIGHT - HEADER_MAX_HEIGHT * 0.90)],
             outputRange: [width * 0.6, width * 0.1],
             extrapolate: Animated.Extrapolate.CLAMP
         });
         /* fastPayment butonunun fontSize'ını küçütüp büyüten animasyon */
-        const fastPaymentButtonFontSize = this.scrollYAnimatedValue.interpolate({
+        const fastPaymentButtonFontSize = this.props.yPoint.interpolate({
             inputRange: [0, (HEADER_MAX_HEIGHT - HEADER_MAX_HEIGHT * 0.90)],
             outputRange: [22, 0],
             extrapolate: Animated.Extrapolate.CLAMP
         });
+
         const month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const sectionList =
             (<SectionList
@@ -241,7 +244,7 @@ class Chart extends Component {
                 girdi-çıktıyı ekrana yazar */
                 renderSectionHeader={({ section: { title, price } }) => (
                     <View style={styles.sectionTitle}>
-                        <Text style={{ color: '#888', fontSize: 15 }}>{new Date(title).getDate()+' '+month[new Date(title).getMonth()]}</Text>
+                        <Text style={{ color: '#888', fontSize: 15 }}>{new Date(title).getDate() + ' ' + month[new Date(title).getMonth()]}</Text>
                         <Text style={{ color: '#888', fontSize: 15 }}>{price}</Text>
                     </View>
 
@@ -290,10 +293,11 @@ class Chart extends Component {
                     scrollEventThrottle={16}
                     onScroll={
                         Animated.event(
-                            [{ nativeEvent: { contentOffset: { y: this.scrollYAnimatedValue } } }],
-                            { onScroll: this.props.yPointChanged(this.scrollYAnimatedValue) }
-                        )                        
-                    }>
+                            [{ nativeEvent: { contentOffset: { y: scrollYAnimatedValue } } }],
+                            { onScroll: this.props.yPointChanged(scrollYAnimatedValue) }
+                        )
+                    }
+                >
                     {sectionList}
                 </Animated.ScrollView>
 

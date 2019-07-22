@@ -6,7 +6,8 @@ const initial_graph_State = {
     balances: null,
     data: [],
     scrollData: [],
-    tooltip: []
+    i: 0,
+    cA: []
 };
 
 export default (state = initial_graph_State, action) => {
@@ -14,13 +15,13 @@ export default (state = initial_graph_State, action) => {
         case 'yPoint_changed':
             return { ...state, yPoint: action.payload };
         case 'rates_changed':
-            return { ...state, balances: action.payload };
+            return { ...state, balances: action.payload, i:0 };
         case 'currency_changed':
-            return { ...state, data: action.payload };
+            return { ...state, data: action.payload.data, i:0, cA: action.payload.cA };
         case 'scrollData_changed':
-            return { ...state, scrollData: action.payload };
-        case 'tooltip_changed':
-            return { ...state, tooltip: action.payload };
+            return { ...state, scrollData: action.payload, i:0 };
+        case 'dataArrayIndex_changed':
+            return { ...state, i: action.payload };
         default:
             return state;
     }
