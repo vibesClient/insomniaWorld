@@ -1,4 +1,5 @@
 export const changeDataArrayIndex = (i) => (dispatch) => {
+console.log(i);
 
     dispatch({
         type: "dataArrayIndex_changed",

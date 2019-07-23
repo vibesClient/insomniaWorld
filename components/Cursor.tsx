@@ -8,7 +8,6 @@ import { changeDataArrayIndex } from '../actions';
 const { sub, interpolate } = Animated;
 const TOUCH_SIZE = 400;
 const white = "white";
-let scrollPoint = 0;
 class Cursor extends Component {
   render() {
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -18,14 +17,23 @@ class Cursor extends Component {
       scrollItemsLength += sc.data.length;
     });
     const scrollLength = (scrollItemsLength * 50) + (this.props.scrollData.length * 40) - 220;
-    const section = scrollLength / this.props.scrollData.length
+    const section = scrollLength / this.props.scrollData.length;
+
+    const radius = 10;
+    const cx = this.props.yPoint;
+    const path = parsePath(this.props.d);
+
+    let reversePath = [];
+    path.segments.reverse().forEach(sg => {
+      reversePath.push(sg);
+    })
+    path.segments.reverse();
 
     const dene = (index) => {
-      console.log(this.props.cA);
-
-      for (let i = 0; i < this.props.cA.length; i++) {
-        if (index >= this.props.cA[i] && index <= (this.props.cA[i] + section) && i != this.props.i) {
+      for (let i = 0; i < reversePath.length - 1; i++) {
+        if (index >= parseInt(reversePath[i].start) && index <= parseInt(reversePath[i].end)) {
           this.props.changeDataArrayIndex(i);
+          break;
         }
       }
     }
@@ -34,9 +42,7 @@ class Cursor extends Component {
     }
 
     /*cursorun konumunu değiştiren animasyon */
-    const radius = 10;
-    const cx = this.props.yPoint;
-    const path = parsePath(this.props.d);
+
     const length = interpolate(cx, {
       inputRange: [0, scrollLength],
       outputRange: [(path.totalLength - path.totalLength * 0.01), -(path.totalLength * 0.008)]
@@ -100,7 +106,7 @@ class Cursor extends Component {
           >
             <Animated.Code>
               {
-                () => Animated.call([this.props.yPoint], setTranslation)                
+                () => Animated.call([length], setTranslation)
               }
             </Animated.Code>
             {dateTime}
